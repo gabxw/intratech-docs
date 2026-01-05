@@ -4,8 +4,41 @@
     <meta charset="utf-8" />
     <title>Redirect</title>
     <script>
-      sessionStorage.redirect = location.href;
+      (function () {
+        const base = "/intratech-docs/";
+        const current = location.href;
+
+        // If we're already at the base path, try to fetch index.html and inject it
+        function loadIndex() {
+          fetch(base + "index.html")
+            .then((res) => {
+              if (!res.ok) throw new Error("index not available");
+              return res.text();
+            })
+            .then((html) => {
+              document.open();
+              document.write(html);
+              document.close();
+            })
+            .catch(() => {
+              // If fetch fails, do a location replace as a fallback
+              if (location.pathname !== base) location.replace(base);
+            });
+        }
+
+        // For other paths, save redirect and try to load index (so SPA can restore path)
+        if (current.endsWith(base) || current.endsWith(base.slice(0, -1))) {
+          loadIndex();
+        } else {
+          try {
+            sessionStorage.redirect = current;
+          } catch (e) {}
+          loadIndex();
+        }
+      })();
     </script>
-    <meta http-equiv="refresh" content="0;URL='/intratech-docs/'" />
   </head>
+  <body>
+    <p>Redirecionando...</p>
+  </body>
 </html>
