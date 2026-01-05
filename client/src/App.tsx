@@ -1,7 +1,7 @@
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/NotFound";
-import { Route, Switch } from "wouter";
+import { Route, Switch, Router } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
@@ -15,19 +15,21 @@ import Cadastros from "./pages/Cadastros";
 
 function Router() {
   return (
-    <Switch>
-      <Route path={"/"} component={Home} />
-      <Route path={"/arquitetura"} component={Arquitetura} />
-      <Route path={"/comercial"} component={Comercial} />
-      <Route path={"/logistica"} component={Logistica} />
-      <Route path={"/compras"} component={Compras} />
-      <Route path={"/gerencial"} component={Gerencial} />
-      <Route path={"/models"} component={Models} />
-      <Route path={"/cadastros"} component={Cadastros} />
-      <Route path={"/404"} component={NotFound} />
-      {/* Final fallback route */}
-      <Route component={NotFound} />
-    </Switch>
+    <Router base="/intratech-docs">
+      <Switch>
+        <Route path={"/"} component={Home} />
+        <Route path={"/arquitetura"} component={Arquitetura} />
+        <Route path={"/comercial"} component={Comercial} />
+        <Route path={"/logistica"} component={Logistica} />
+        <Route path={"/compras"} component={Compras} />
+        <Route path={"/gerencial"} component={Gerencial} />
+        <Route path={"/models"} component={Models} />
+        <Route path={"/cadastros"} component={Cadastros} />
+        <Route path={"/404"} component={NotFound} />
+        {/* Final fallback route */}
+        <Route component={NotFound} />
+      </Switch>
+    </Router>
   );
 }
 
