@@ -10,7 +10,7 @@ const plugins = [react(), tailwindcss(), jsxLocPlugin() /*, vitePluginManusRunti
 
 export default defineConfig({
   plugins,
-  base: '/intratech-docs/',
+  base: './',
 
   resolve: {
     alias: {

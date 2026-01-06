@@ -15,7 +15,7 @@ import Cadastros from "./pages/Cadastros";
 
 function AppRouter() {
   return (
-    <Router base="/intratech-docs">
+    <Router base={window.location.pathname.startsWith('/intratech-docs') ? '/intratech-docs' : ''}>
       <Switch>
         <Route path="/" component={Home} />
         <Route path="/arquitetura" component={Arquitetura} />
