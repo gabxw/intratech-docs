@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { Link, useLocation } from "wouter";
 import { cn } from "@/lib/utils";
 import { 
@@ -117,8 +117,16 @@ const navigation: NavItem[] = [
 ];
 
 function NavItemComponent({ item, depth = 0 }: { item: NavItem; depth?: number }) {
-  const [location] = useLocation();
-  const [isOpen, setIsOpen] = useState(location.startsWith(item.href) || item.href === "/");
+  const [location, setLocation] = useLocation();
+  const [isOpen, setIsOpen] = useState((item as any).isOpenInitial || location.startsWith(item.href) || item.href === "/");
+  
+  // Atualiza isOpen se isOpenInitial mudar (quando o usuário digita na busca)
+  React.useEffect(() => {
+    if ((item as any).isOpenInitial) {
+      setIsOpen(true);
+    }
+  }, [(item as any).isOpenInitial]);
+
   const isActive = location === item.href || (item.href !== "/" && location.startsWith(item.href));
   const hasChildren = item.children && item.children.length > 0;
 
@@ -136,8 +144,14 @@ function NavItemComponent({ item, depth = 0 }: { item: NavItem; depth?: number }
           style={{ paddingLeft: `${depth * 12 + 16}px` }}
           onClick={(e) => {
             if (hasChildren) {
-              e.preventDefault();
-              setIsOpen(!isOpen);
+              // Se clicar no ícone de expansão ou se já estiver na página, apenas alterna o menu
+              // Caso contrário, navega para a página E abre o menu
+              if (isActive) {
+                e.preventDefault();
+                setIsOpen(!isOpen);
+              } else {
+                setIsOpen(true);
+              }
             }
           }}
         >
@@ -172,6 +186,25 @@ function NavItemComponent({ item, depth = 0 }: { item: NavItem; depth?: number }
 export default function Layout({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredNavigation = searchQuery.trim() === "" 
+    ? navigation 
+    : navigation.map(item => {
+        const matchesTitle = item.title.toLowerCase().includes(searchQuery.toLowerCase());
+        const matchedChildren = item.children?.filter(child => 
+          child.title.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+        
+        if (matchesTitle || (matchedChildren && matchedChildren.length > 0)) {
+          return {
+            ...item,
+            children: matchedChildren,
+            // Se o pai não der match mas o filho sim, forçamos a abertura
+            isOpenInitial: true 
+          };
+        }
+        return null;
+      }).filter(Boolean) as NavItem[];
 
   return (
     <div className="min-h-screen bg-background">
@@ -239,9 +272,15 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           {/* Navigation */}
           <ScrollArea className="flex-1 py-4">
             <nav className="space-y-1">
-              {navigation.map((item) => (
-                <NavItemComponent key={item.href} item={item} />
-              ))}
+              {filteredNavigation.length > 0 ? (
+                filteredNavigation.map((item) => (
+                  <NavItemComponent key={item.href} item={item} />
+                ))
+              ) : (
+                <div className="px-6 py-4 text-sm text-muted-foreground italic">
+                  Nenhum resultado encontrado
+                </div>
+              )}
             </nav>
           </ScrollArea>
 

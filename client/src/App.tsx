@@ -13,19 +13,19 @@ import Gerencial from "./pages/Gerencial";
 import Models from "./pages/Models";
 import Cadastros from "./pages/Cadastros";
 
-function Router() {
+function AppRouter() {
   return (
     <Router base="/intratech-docs">
       <Switch>
-        <Route path={"/"} component={Home} />
-        <Route path={"/arquitetura"} component={Arquitetura} />
-        <Route path={"/comercial"} component={Comercial} />
-        <Route path={"/logistica"} component={Logistica} />
-        <Route path={"/compras"} component={Compras} />
-        <Route path={"/gerencial"} component={Gerencial} />
-        <Route path={"/models"} component={Models} />
-        <Route path={"/cadastros"} component={Cadastros} />
-        <Route path={"/404"} component={NotFound} />
+        <Route path="/" component={Home} />
+        <Route path="/arquitetura" component={Arquitetura} />
+        <Route path="/comercial" component={Comercial} />
+        <Route path="/logistica" component={Logistica} />
+        <Route path="/compras" component={Compras} />
+        <Route path="/gerencial" component={Gerencial} />
+        <Route path="/models" component={Models} />
+        <Route path="/cadastros" component={Cadastros} />
+        <Route path="/404" component={NotFound} />
         {/* Final fallback route */}
         <Route component={NotFound} />
       </Switch>
@@ -39,7 +39,7 @@ function App() {
       <ThemeProvider defaultTheme="light">
         <TooltipProvider>
           <Toaster />
-          <Router />
+          <AppRouter />
         </TooltipProvider>
       </ThemeProvider>
     </ErrorBoundary>
